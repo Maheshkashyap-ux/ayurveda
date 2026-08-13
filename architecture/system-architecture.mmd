@@ -1,13 +1,37 @@
-flowchart TD
-    U[User] --> UI[Frontend]
-    UI --> API[API Layer]
-    API --> NLP[NLP / Terminology]
-    NLP --> RET[Hybrid Retrieval]
-    RET --> RANK[Ranking]
-    RANK --> SAFE[Safety + Evidence]
-    SAFE --> OUT[Explainable Result]
-    RET --> KB[(Knowledge Base)]
-    KB --> F[Formulations]
-    KB --> H[Ingredients]
-    KB --> I[Indications]
-    KB --> REF[References]
+flowchart TB
+
+    A["User / Practitioner"]
+
+    B["Web Application"]
+
+    C["Disease & Symptom Input"]
+    D["Recommendation Engine"]
+    E["Drug & Formulation Database"]
+    F["Ayurvedic Knowledge Base"]
+
+    G["Disease Synonym Mapping"]
+    H["Drug Property Matching"]
+    I["Formulation Filtering"]
+    J["Recommendation Ranking"]
+
+    K["Recommendation Results"]
+    L["Drug / Formulation Details"]
+    M["Ayurvedic Properties<br/>Rasa • Guna • Virya • Vipaka"]
+
+    A --> B
+    B --> C
+    C --> D
+
+    D --> G
+    G --> H
+    H --> I
+    I --> J
+
+    E --> H
+    E --> I
+    F --> G
+    F --> H
+
+    J --> K
+    K --> L
+    L --> M
