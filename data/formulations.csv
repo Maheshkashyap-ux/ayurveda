@@ -1,3 +1,8 @@
 formulation_id,name,formulation_type,associated_condition,usage_context
 F001,Punarnavadi Kashaya,Kashaya,Jvara,Associated with inflammatory changes
 F002,Vyaghri Haritaki,Formulation,Kasa,Upper respiratory conditions such as common cold
+F003,Triphala Churna,Churna,Constipation,Used for digestive support and bowel regulation
+F004,Ashwagandha Churna,Churna,General weakness,Used for strength and general wellness
+F005,Chyawanprash,Avaleha,Cough and weakness,Used for respiratory support and general wellness
+F006,Dashamoola Kashaya,Kashaya,Inflammation,Used traditionally for inflammatory and musculoskeletal conditions
+F007,Trikatu Churna,Churna,Indigestion,Used for digestive support
