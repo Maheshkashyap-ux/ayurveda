@@ -1,0 +1,11 @@
+flowchart LR
+    A[Query] --> B[Validate]
+    B --> C[Normalize]
+    C --> D[Extract Concepts]
+    D --> E[Structured Retrieval]
+    D --> F[Semantic Retrieval]
+    E --> G[Merge]
+    F --> G
+    G --> H[Rank]
+    H --> I[Evidence + Safety]
+    I --> J[Response]

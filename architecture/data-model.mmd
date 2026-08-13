@@ -1,0 +1,7 @@
+erDiagram
+    FORMULATION ||--o{ FORMULATION_INGREDIENT : contains
+    INGREDIENT ||--o{ FORMULATION_INGREDIENT : used_in
+    FORMULATION ||--o{ FORMULATION_INDICATION : associated_with
+    INDICATION ||--o{ FORMULATION_INDICATION : maps_to
+    FORMULATION ||--o{ EVIDENCE : supported_by
+    REFERENCE ||--o{ EVIDENCE : provides

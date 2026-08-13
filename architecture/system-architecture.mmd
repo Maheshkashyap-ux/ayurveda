@@ -1,0 +1,13 @@
+flowchart TD
+    U[User] --> UI[Frontend]
+    UI --> API[API Layer]
+    API --> NLP[NLP / Terminology]
+    NLP --> RET[Hybrid Retrieval]
+    RET --> RANK[Ranking]
+    RANK --> SAFE[Safety + Evidence]
+    SAFE --> OUT[Explainable Result]
+    RET --> KB[(Knowledge Base)]
+    KB --> F[Formulations]
+    KB --> H[Ingredients]
+    KB --> I[Indications]
+    KB --> REF[References]
