@@ -1,7 +1,54 @@
 erDiagram
+
+    DISEASE {
+        int disease_id
+        string disease_name
+        string description
+    }
+
+    SYMPTOM {
+        int symptom_id
+        string symptom_name
+    }
+
+    DISEASE_SYMPTOM {
+        int disease_id
+        int symptom_id
+    }
+
+    FORMULATION {
+        int formulation_id
+        string formulation_name
+        string dosage_form
+        string source
+    }
+
+    INGREDIENT {
+        int ingredient_id
+        string ingredient_name
+        string type
+    }
+
+    FORMULATION_INGREDIENT {
+        int formulation_id
+        int ingredient_id
+        string quantity
+    }
+
+    DRUG_PROPERTY {
+        int property_id
+        string rasa
+        string guna
+        string virya
+        string vipaka
+    }
+
+    DISEASE ||--o{ DISEASE_SYMPTOM : has
+    SYMPTOM ||--o{ DISEASE_SYMPTOM : associated_with
+
+    DISEASE ||--o{ FORMULATION : treated_by
+
     FORMULATION ||--o{ FORMULATION_INGREDIENT : contains
     INGREDIENT ||--o{ FORMULATION_INGREDIENT : used_in
-    FORMULATION ||--o{ FORMULATION_INDICATION : associated_with
-    INDICATION ||--o{ FORMULATION_INDICATION : maps_to
-    FORMULATION ||--o{ EVIDENCE : supported_by
-    REFERENCE ||--o{ EVIDENCE : provides
+
+    INGREDIENT ||--o| DRUG_PROPERTY : has
