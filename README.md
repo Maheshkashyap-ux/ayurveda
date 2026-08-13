@@ -1,43 +1,54 @@
-# Ayurvedic Formulation Intelligence Platform
+# Ayurveda Formulation Intelligence System
 
-An explainable, evidence-aware platform for exploring Ayurvedic formulations, ingredients, indications, relationships, and supporting references through structured data, terminology normalization, retrieval, ranking, and safety-aware explanations.
+## Overview
 
-## Repository at a glance
+This project proposes a software system that helps students and practitioners explore Ayurvedic formulations based on diseases, symptoms, and related terminology.
+
+Ayurvedic knowledge is distributed across classical texts, repositories, and other traditional medical literature. The proposed system aims to organize this information into a structured knowledge base so that relevant formulations can be identified more easily.
+
+## Problem Statement
+
+Ayurvedic diseases and formulations may be represented using different names, languages, and terminology. The same disease may have multiple names, while the same term may have different meanings depending on its context.
+
+The proposed system aims to:
+
+- Identify diseases and symptoms from user input.
+- Handle synonyms and alternative terminology.
+- Connect diseases with relevant Ayurvedic formulations.
+- Organize information about formulations and medicinal substances.
+- Present relevant information to the user in a simple interface.
+
+## Current Project Status
+
+The project is currently in the **initial structure and prototype stage**.
+
+The current repository contains:
+
+- Initial project architecture
+- Basic data structure
+- Sample disease records
+- Sample formulation records
+- Basic synonym mappings
+- Planned frontend, backend, ML, and documentation components
+
+The sample data currently included in the repository is intended only for demonstrating the proposed system structure.
+
+## Repository Structure
 
 ```text
-AYURVEDA-FORMULATION-INTELLIGENCE/
-├── architecture/
-├── backend/
-├── data/
-├── docs/
-├── frontend/
-├── ml/
-├── scripts/
+ayurveda/
+│
+├── architecture/     # System architecture and flow diagrams
+├── backend/          # Backend services and APIs
+├── data/             # Structured Ayurvedic data
+├── docs/             # Project documentation
+├── frontend/         # User interface
+├── ml/               # Future ML/NLP components
+├── scripts/          # Utility and setup scripts
+│
 ├── ARCHITECTURE.md
-├── HANDOFF.md
 ├── IDEATION_AND_STRATEGY.md
+├── HANDOFF.md
 ├── MASTER_BUILD_PROMPT.md
-└── PRE_TEST_READINESS.md
-```
-
-## Core idea
-
-The platform separates the system into clear layers:
-
-1. User interface
-2. API / application services
-3. Terminology and NLP processing
-4. Retrieval and candidate generation
-5. Recommendation / ranking
-6. Knowledge base and evidence
-7. Safety and explanation layer
-
-The system is intended as an information and decision-support prototype, not as a substitute for a qualified medical or Ayurvedic practitioner.
-
-## Documentation
-
-See [`docs/`](docs/) for detailed technical documentation and [`architecture/`](architecture/) for Mermaid diagrams.
-
-## Development status
-
-This repository is a hackathon-ready engineering/documentation scaffold. Replace marked placeholders with the team's actual implementation details as development progresses.
+├── PRE_TEST_READINESS.md
+└── README.md
