@@ -4,3 +4,8 @@ D001,Jvara,Fever,Fever-related condition
 D002,Kasa,Cough,Cough-related condition
 D003,Pinasa,Common Cold,Upper respiratory condition
 D004,Inflammatory Condition,Inflammatory Changes,Condition associated with inflammatory changes
+D005,Ajirna,Indigestion,Digestive discomfort and indigestion
+D006,Arsha,Piles,Condition associated with piles
+D007,Atisara,Diarrhea,Condition associated with loose stools
+D008,Shotha,Inflammation,Condition associated with swelling and inflammation
+D009,Daurbalya,General Weakness,Condition associated with weakness and fatigue
