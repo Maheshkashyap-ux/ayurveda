@@ -1,11 +1,43 @@
-flowchart LR
-    A[Query] --> B[Validate]
-    B --> C[Normalize]
-    C --> D[Extract Concepts]
-    D --> E[Structured Retrieval]
-    D --> F[Semantic Retrieval]
-    E --> G[Merge]
+flowchart TD
+
+    A["Start"]
+
+    B["User enters disease / symptoms"]
+
+    C["Normalize disease name"]
+
+    D["Check disease synonyms"]
+
+    E["Identify relevant symptoms"]
+
+    F["Search Ayurvedic formulations"]
+
+    G["Match formulation with disease"]
+
+    H["Check drug ingredients"]
+
+    I["Check Ayurvedic properties"]
+
+    J["Filter unsuitable formulations"]
+
+    K["Rank suitable formulations"]
+
+    L["Display recommendations"]
+
+    M["Show formulation details"]
+
+    N["Show references / sources"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
     F --> G
-    G --> H[Rank]
-    H --> I[Evidence + Safety]
-    I --> J[Response]
+    G --> H
+    H --> I
+    I --> J
+    J --> K
+    K --> L
+    L --> M
+    M --> N
