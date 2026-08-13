@@ -1,1 +1,6 @@
 
+disease_id,canonical_name,common_name,description
+D001,Jvara,Fever,Fever-related condition
+D002,Kasa,Cough,Cough-related condition
+D003,Pinasa,Common Cold,Upper respiratory condition
+D004,Inflammatory Condition,Inflammatory Changes,Condition associated with inflammatory changes
