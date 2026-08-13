@@ -1,7 +1,30 @@
 graph LR
-    QUERY[Query] --> CONCEPT[Concept]
-    CONCEPT --> IND[Indication]
-    IND --> FORM[Formulation]
-    FORM --> ING[Ingredient]
-    FORM --> REF[Reference]
-    ING --> REF
+
+    D["Disease"]
+
+    S["Symptoms"]
+
+    SY["Disease Synonyms"]
+
+    F["Ayurvedic Formulation"]
+
+    I1["Ingredient"]
+
+    I2["Ingredient"]
+
+    P["Ayurvedic Properties"]
+
+    R["Reference / Source"]
+
+    D -->|"has"| S
+    D -->|"also known as"| SY
+
+    D -->|"treated by"| F
+
+    F -->|"contains"| I1
+    F -->|"contains"| I2
+
+    I1 -->|"has properties"| P
+    I2 -->|"has properties"| P
+
+    F -->|"documented in"| R
