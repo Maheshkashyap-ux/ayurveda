@@ -1,20 +1,36 @@
-# Documentation Index
+# Project Documentation
 
-- [Project Overview](PROJECT_OVERVIEW.md)
-- [Problem Statement](PROBLEM_STATEMENT.md)
-- [System Flow](SYSTEM_FLOW.md)
-- [Data Model](DATA_MODEL.md)
-- [Data Sources](DATA_SOURCES.md)
-- [Dataset Specification](DATASET_SPECIFICATION.md)
-- [NLP Pipeline](NLP_PIPELINE.md)
-- [Retrieval Engine](RETRIEVAL_ENGINE.md)
-- [Recommendation Engine](RECOMMENDATION_ENGINE.md)
-- [Knowledge Graph](KNOWLEDGE_GRAPH.md)
-- [Provenance and Evidence](PROVENANCE_AND_EVIDENCE.md)
-- [Safety and Ethics](SAFETY_AND_ETHICS.md)
-- [Evaluation](EVALUATION.md)
-- [API](API.md)
-- [Frontend Design](FRONTEND_DESIGN.md)
-- [Deployment](DEPLOYMENT.md)
-- [Demo Flow](DEMO_FLOW.md)
-- [Limitations](LIMITATIONS.md)
+This folder contains the documentation for the Ayurveda Formulation
+Intelligence System.
+
+## Documentation Areas
+
+### 1. Project Overview
+Explains the problem statement, objectives and proposed solution.
+
+### 2. System Architecture
+Describes the major components of the proposed system and how they
+communicate with each other.
+
+### 3. Data Model
+Describes the structure of the disease, symptom, formulation,
+ingredient and Ayurvedic property data.
+
+### 4. Recommendation Approach
+Describes how user input can be mapped to relevant Ayurvedic
+formulations.
+
+### 5. Terminology and Synonyms
+Describes how alternative names and terminology can be handled.
+
+### 6. Future Development
+Documents planned improvements and components that will be
+implemented in later stages.
+
+## Current Status
+
+The project is currently at the **basic architecture and prototype
+stage**.
+
+The documentation will be expanded as individual components are
+implemented.
