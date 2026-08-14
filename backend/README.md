@@ -37,3 +37,14 @@ Candidate Ranking
     |
     v
 Explainable Result
+
+---
+
+# 23. Quick Start
+
+## 23.1 Create a Virtual Environment
+
+From the project root:
+
+```bash
+python -m venv .venv
