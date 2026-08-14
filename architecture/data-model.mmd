@@ -1,54 +1,68 @@
-erDiagram
+flowchart LR
 
-    DISEASE {
-        int disease_id
-        string disease_name
-        string description
-    }
+    USER["USER QUERY<br/><br/>Search term<br/>Disease / symptom / common name"]
 
-    SYMPTOM {
-        int symptom_id
-        string symptom_name
-    }
+    SYN["SYNONYM<br/><br/>synonym_id<br/>synonym<br/>canonical_term<br/>match_type"]
 
-    DISEASE_SYMPTOM {
-        int disease_id
-        int symptom_id
-    }
+    DIS["DISEASE / CONDITION<br/><br/>disease_id<br/>canonical_name<br/>common_name<br/>description"]
 
-    FORMULATION {
-        int formulation_id
-        string formulation_name
-        string dosage_form
-        string source
-    }
+    FORM["FORMULATION<br/><br/>formulation_id<br/>name<br/>formulation_type<br/>associated_condition<br/>description"]
 
-    INGREDIENT {
-        int ingredient_id
-        string ingredient_name
-        string type
-    }
+    ING["INGREDIENT<br/><br/>ingredient_id<br/>name<br/>scientific_name<br/>plant_part"]
 
-    FORMULATION_INGREDIENT {
-        int formulation_id
-        int ingredient_id
-        string quantity
-    }
+    PROP["AYURVEDIC PROPERTIES<br/><br/>rasa<br/>guna<br/>virya<br/>vipaka"]
 
-    DRUG_PROPERTY {
-        int property_id
-        string rasa
-        string guna
-        string virya
-        string vipaka
-    }
+    REF["REFERENCE / EVIDENCE<br/><br/>reference_id<br/>title<br/>author<br/>year<br/>source_type<br/>source_location"]
 
-    DISEASE ||--o{ DISEASE_SYMPTOM : has
-    SYMPTOM ||--o{ DISEASE_SYMPTOM : associated_with
+    RESULT["RECOMMENDATION RESULT<br/><br/>normalized_term<br/>matched_condition<br/>formulation<br/>match_score<br/>explanation<br/>evidence_status"]
 
-    DISEASE ||--o{ FORMULATION : treated_by
 
-    FORMULATION ||--o{ FORMULATION_INGREDIENT : contains
-    INGREDIENT ||--o{ FORMULATION_INGREDIENT : used_in
+    USER -->|"Terminology lookup"| SYN
 
-    INGREDIENT ||--o| DRUG_PROPERTY : has
+    SYN -->|"Resolves to canonical term"| DIS
+
+    DIS -->|"Associated with"| FORM
+
+    FORM -->|"Contains"| ING
+
+    ING -->|"Has properties"| PROP
+
+    FORM -->|"Supported / traced by"| REF
+
+    FORM -->|"Candidate result"| RESULT
+
+    DIS -->|"Condition context"| RESULT
+
+    SYN -->|"Normalization evidence"| RESULT
+
+    REF -->|"Evidence status"| RESULT
+
+
+    %% Future extensions
+
+    SYM["SYMPTOM<br/><br/>symptom_id<br/>name<br/>description"]
+
+    FORM_SYM["FORMULATION ↔ SYMPTOM<br/><br/>Association relationship"]
+
+    DIS -->|"May be associated with"| SYM
+
+    SYM -.-> FORM_SYM
+    FORM_SYM -.-> FORM
+
+
+    %% Knowledge graph relationship layer
+
+    KG["KNOWLEDGE GRAPH RELATIONSHIPS<br/><br/>
+    has_synonym<br/>
+    associated_with<br/>
+    contains<br/>
+    has_property<br/>
+    supported_by<br/>
+    has_symptom"]
+
+    SYN -.-> KG
+    DIS -.-> KG
+    FORM -.-> KG
+    ING -.-> KG
+    PROP -.-> KG
+    REF -.-> KG
