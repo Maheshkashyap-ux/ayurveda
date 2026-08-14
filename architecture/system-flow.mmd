@@ -1,43 +1,149 @@
-flowchart TD
+flowchart TB
 
-    A["Start"]
+    START(["USER INPUT<br/><br/>Example: 'fever'"])
 
-    B["User enters disease / symptoms"]
+    START --> S1
 
-    C["Normalize disease name"]
+    S1["STAGE 1 — INPUT PROCESSING<br/><br/>
+    Receive user query<br/>
+    Remove unnecessary whitespace<br/>
+    Normalize text format<br/>
+    Prepare search term"]
 
-    D["Check disease synonyms"]
+    S1 --> S2
 
-    E["Identify relevant symptoms"]
+    S2["STAGE 2 — TERMINOLOGY NORMALIZATION<br/><br/>
+    Search synonyms.csv<br/>
+    Identify common / alternate terminology<br/>
+    Resolve canonical Ayurvedic term<br/><br/>
+    Example:<br/>
+    fever → Jvara"]
 
-    F["Search Ayurvedic formulations"]
+    SYN["synonyms.csv<br/><br/>
+    Common Term<br/>
+    Canonical Term<br/>
+    Alternative Names"]
 
-    G["Match formulation with disease"]
+    SYN -.-> S2
 
-    H["Check drug ingredients"]
+    S2 --> S3
 
-    I["Check Ayurvedic properties"]
+    S3["STAGE 3 — CONDITION LOOKUP<br/><br/>
+    Search diseases.csv<br/>
+    Match canonical term<br/>
+    Retrieve disease / condition record<br/><br/>
+    Example:<br/>
+    Jvara → D001"]
 
-    J["Filter unsuitable formulations"]
+    DIS["diseases.csv<br/><br/>
+    Disease ID<br/>
+    Canonical Name<br/>
+    Common Name"]
 
-    K["Rank suitable formulations"]
+    DIS -.-> S3
 
-    L["Display recommendations"]
+    S3 --> CHECK1{"Disease / condition<br/>found?"}
 
-    M["Show formulation details"]
+    CHECK1 -->|"NO"| NO1["NO MATCH<br/><br/>
+    Return controlled response:<br/>
+    'No matching record found<br/>
+    in the prototype dataset.'"]
 
-    N["Show references / sources"]
+    CHECK1 -->|"YES"| S4
 
-    A --> B
-    B --> C
-    C --> D
-    D --> E
-    E --> F
-    F --> G
-    G --> H
-    H --> I
-    I --> J
-    J --> K
-    K --> L
-    L --> M
-    M --> N
+    S4["STAGE 4 — FORMULATION RETRIEVAL<br/><br/>
+    Use identified condition<br/>
+    Search formulations.csv<br/>
+    Retrieve associated formulations<br/>
+    Generate candidate list"]
+
+    FORM["formulations.csv<br/><br/>
+    Formulation ID<br/>
+    Name<br/>
+    Type<br/>
+    Associated Condition"]
+
+    FORM -.-> S4
+
+    S4 --> CHECK2{"Matching formulations<br/>found?"}
+
+    CHECK2 -->|"NO"| NO2["NO FORMULATION MATCH<br/><br/>
+    Return condition information<br/>
+    without inventing recommendations"]
+
+    CHECK2 -->|"YES"| S5
+
+    S5["STAGE 5 — CANDIDATE RANKING<br/><br/>
+    Evaluate available matching signals:<br/><br/>
+    • Terminology match<br/>
+    • Condition match<br/>
+    • Context match<br/>
+    • Evidence availability<br/><br/>
+    Generate prototype match score"]
+
+    S5 --> S6
+
+    S6["STAGE 6 — EXPLAINABILITY<br/><br/>
+    Build 'Why this result?' explanation<br/><br/>
+    Input<br/>
+    ↓<br/>
+    Normalized term<br/>
+    ↓<br/>
+    Condition<br/>
+    ↓<br/>
+    Formulation<br/><br/>
+    Show scoring factors"]
+
+    S6 --> S7
+
+    S7["STAGE 7 — RESULT ASSEMBLY<br/><br/>
+    Combine:<br/><br/>
+    • Original query<br/>
+    • Normalized terminology<br/>
+    • Condition<br/>
+    • Ranked formulations<br/>
+    • Match score<br/>
+    • Explanation<br/>
+    • Evidence status"]
+
+    S7 --> OUTPUT
+
+    OUTPUT(["FINAL RESULT<br/><br/>
+    Search Results<br/>
+    Formulation Cards<br/>
+    Why This Result?<br/>
+    Formulation Details<br/>
+    Evidence Trail"])
+
+    OUTPUT --> END(["USER EXPLORES RESULT"])
+
+
+    %% Future intelligence
+
+    S2 -.-> NLP["FUTURE NLP / ML<br/><br/>
+    Semantic search<br/>
+    Entity recognition<br/>
+    Transliteration<br/>
+    Context-aware matching"]
+
+    S5 -.-> ML["FUTURE RANKING MODEL<br/><br/>
+    Embedding similarity<br/>
+    Learning-based ranking<br/>
+    Confidence calibration"]
+
+
+    %% Evidence layer
+
+    S6 -.-> REF["FUTURE EVIDENCE LAYER<br/><br/>
+    Reference metadata<br/>
+    Source provenance<br/>
+    Literature / classical sources"]
+
+    %% Logging
+
+    S7 -.-> LOG["APPLICATION LOG<br/><br/>
+    Query<br/>
+    Normalization<br/>
+    Retrieval<br/>
+    Result<br/>
+    Errors / warnings"]
