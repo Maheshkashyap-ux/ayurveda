@@ -1,61 +1,39 @@
-# Backend
+# Ayurveda Intelligence — Backend
 
-The backend will handle the core recommendation logic of the Ayurveda
-formulation recommendation system.
+> **Project:** Ayurveda Intelligence — Evidence-Aware Ayurvedic Formulation Discovery  
+> **Component:** Backend / Recommendation Engine  
+> **Purpose:** Hackathon Prototype  
+> **Status:** Prototype / Incremental Development
 
-## Main Responsibilities
+---
 
-- Receive disease or symptom information from the frontend.
-- Normalize disease names and handle known synonyms.
-- Search the Ayurveda formulation dataset.
-- Match diseases with suitable formulations.
-- Check formulation ingredients and Ayurvedic properties.
-- Filter unsuitable formulations.
-- Return ranked recommendations to the frontend.
+## 1. Backend Overview
 
-## Basic Processing Flow
+The backend provides the processing and knowledge-retrieval layer for the
+Ayurveda Intelligence prototype.
 
+Its primary responsibility is to transform a user's natural-language
+search term into a structured and explainable result.
+
+The current prototype follows this pipeline:
+
+```text
 User Input
-    ↓
-Disease / Symptom Identification
-    ↓
-Disease Normalization
-    ↓
-Formulation Search
-    ↓
-Ingredient & Property Matching
-    ↓
-Filtering
-    ↓
-Recommendation
-    ↓
-Frontend
-
-## Planned Components
-
-### Recommendation Engine
-Responsible for matching the user's condition with suitable
-Ayurvedic formulations.
-
-### Disease Mapper
-Handles alternative names and synonyms for diseases.
-
-### Formulation Matcher
-Checks the relationship between diseases, formulations and ingredients.
-
-### Property Checker
-Provides Ayurvedic properties such as:
-
-- Rasa
-- Guna
-- Virya
-- Vipaka
-
-### Recommendation Response
-Returns the selected formulations along with their relevant information
-and references.
-
-## Current Status
-
-Basic project structure and data model are being developed.
-The recommendation engine will be implemented incrementally.
+    |
+    v
+Input Normalization
+    |
+    v
+Terminology Resolution
+    |
+    v
+Disease / Condition Lookup
+    |
+    v
+Formulation Retrieval
+    |
+    v
+Candidate Ranking
+    |
+    v
+Explainable Result
