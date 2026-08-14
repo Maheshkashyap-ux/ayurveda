@@ -1,37 +1,205 @@
+# Ayurveda Intelligence — System Architecture
+
+> Project: Ayurveda Intelligence — Evidence-Aware Ayurvedic Formulation Discovery
+> Purpose: Hackathon Prototype
+> Architecture Status: Prototype / Incremental Development
+
+---
+
+## 1. End-to-End System Architecture
+
+```mermaid
 flowchart TB
 
-    A["User / Practitioner"]
+    %% =========================================================
+    %% USER LAYER
+    %% =========================================================
 
-    B["Web Application"]
+    U["User / Researcher"]
 
-    C["Disease & Symptom Input"]
-    D["Recommendation Engine"]
-    E["Drug & Formulation Database"]
-    F["Ayurvedic Knowledge Base"]
+    UI["Web Application<br/>Search & Knowledge Interface"]
 
-    G["Disease Synonym Mapping"]
-    H["Drug Property Matching"]
-    I["Formulation Filtering"]
-    J["Recommendation Ranking"]
+    U -->|"Disease / symptom / common term"| UI
 
-    K["Recommendation Results"]
-    L["Drug / Formulation Details"]
-    M["Ayurvedic Properties<br/>Rasa • Guna • Virya • Vipaka"]
 
-    A --> B
-    B --> C
-    C --> D
+    %% =========================================================
+    %% INPUT PROCESSING
+    %% =========================================================
 
-    D --> G
-    G --> H
-    H --> I
-    I --> J
+    IP["STAGE 1 — INPUT PROCESSING<br/><br/>
+    Text cleaning<br/>
+    Case normalization<br/>
+    Basic tokenization"]
 
-    E --> H
-    E --> I
-    F --> G
-    F --> H
+    UI --> IP
 
-    J --> K
-    K --> L
-    L --> M
+
+    %% =========================================================
+    %% TERMINOLOGY INTELLIGENCE
+    %% =========================================================
+
+    TR["STAGE 2 — TERMINOLOGY RESOLUTION<br/><br/>
+    Synonym lookup<br/>
+    Common → canonical terminology<br/>
+    Ayurvedic terminology mapping<br/>
+    Match type detection"]
+
+    SYN["synonyms.csv<br/><br/>
+    Canonical terms<br/>
+    Common names<br/>
+    Alternative terminology"]
+
+    IP --> TR
+    SYN --> TR
+
+
+    %% =========================================================
+    %% DISEASE IDENTIFICATION
+    %% =========================================================
+
+    DI["STAGE 3 — CONDITION IDENTIFICATION<br/><br/>
+    Identify canonical disease / condition<br/>
+    Match disease record<br/>
+    Retrieve description"]
+
+    DIS["diseases.csv<br/><br/>
+    Disease ID<br/>
+    Canonical name<br/>
+    Common name<br/>
+    Description"]
+
+    TR --> DI
+    DIS --> DI
+
+
+    %% =========================================================
+    %% KNOWLEDGE RETRIEVAL
+    %% =========================================================
+
+    KR["STAGE 4 — KNOWLEDGE RETRIEVAL<br/><br/>
+    Retrieve associated formulations<br/>
+    Generate candidate results<br/>
+    Match condition ↔ formulation"]
+
+    FORM["formulations.csv<br/><br/>
+    Formulation ID<br/>
+    Name<br/>
+    Formulation type<br/>
+    Associated condition<br/>
+    Usage context"]
+
+    DI --> KR
+    FORM --> KR
+
+
+    %% =========================================================
+    %% FUTURE INGREDIENT LAYER
+    %% =========================================================
+
+    ING["INGREDIENT KNOWLEDGE<br/><br/>
+    Formulation ingredients<br/>
+    Ingredient properties<br/>
+    Rasa / Guna / Virya / Vipaka"]
+
+    KR -.->|"Future extension"| ING
+
+
+    %% =========================================================
+    %% RANKING
+    %% =========================================================
+
+    RANK["STAGE 5 — CANDIDATE RANKING<br/><br/>
+    Terminology match<br/>
+    Condition match<br/>
+    Context match<br/>
+    Evidence availability<br/>
+    Prototype match score"]
+
+    KR --> RANK
+
+
+    %% =========================================================
+    %% EXPLAINABILITY
+    %% =========================================================
+
+    XAI["STAGE 6 — EXPLAINABILITY ENGINE<br/><br/>
+    Why was this result shown?<br/>
+    Match path<br/>
+    Scoring breakdown<br/>
+    Matched terminology<br/>
+    Associated condition"]
+
+    RANK --> XAI
+
+
+    %% =========================================================
+    %% EVIDENCE
+    %% =========================================================
+
+    REF["EVIDENCE / REFERENCES<br/><br/>
+    Source metadata<br/>
+    Classical references<br/>
+    Literature references<br/>
+    Evidence provenance"]
+
+    XAI -.->|"Future evidence layer"| REF
+
+
+    %% =========================================================
+    %% RESULT ASSEMBLY
+    %% =========================================================
+
+    RES["RESULT ASSEMBLY<br/><br/>
+    Normalized term<br/>
+    Identified condition<br/>
+    Ranked formulations<br/>
+    Match score<br/>
+    Explanation<br/>
+    Evidence status"]
+
+    XAI --> RES
+    REF -.-> RES
+
+
+    %% =========================================================
+    %% FRONTEND OUTPUT
+    %% =========================================================
+
+    OUT["RESULT INTERFACE<br/><br/>
+    Formulation cards<br/>
+    Why this result?<br/>
+    Formulation details<br/>
+    Evidence trail"]
+
+    RES --> OUT
+    OUT --> U
+
+
+    %% =========================================================
+    %% FUTURE ML / NLP
+    %% =========================================================
+
+    NLP["FUTURE NLP / ML LAYER<br/><br/>
+    Semantic search<br/>
+    Entity recognition<br/>
+    Transliteration handling<br/>
+    Context-aware matching<br/>
+    Learning-based ranking"]
+
+    TR -.->|"Future enhancement"| NLP
+    DI -.->|"Future enhancement"| NLP
+    RANK -.->|"Future enhancement"| NLP
+
+
+    %% =========================================================
+    %% MONITORING / LOGGING
+    %% =========================================================
+
+    LOG["APPLICATION LOGGING<br/><br/>
+    Search queries<br/>
+    Normalization results<br/>
+    Retrieval results<br/>
+    Errors / warnings"]
+
+    UI -.-> LOG
+    RES -.-> LOG
