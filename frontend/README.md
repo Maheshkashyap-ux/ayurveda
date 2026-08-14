@@ -1,45 +1,27 @@
-# Frontend
+# Ayurveda Intelligence — Frontend
 
-The frontend will provide the user interface for the Ayurveda
-Formulation Intelligence System.
+> **Project:** Ayurveda Intelligence — Evidence-Aware Ayurvedic Formulation Discovery  
+> **Component:** Research & Discovery Interface  
+> **Purpose:** Hackathon Prototype  
+> **Status:** Prototype / Incremental Development
 
-## Main Responsibilities
+---
 
-- Accept disease or symptom input from the user.
-- Provide a simple search interface.
-- Display identified diseases or symptoms.
-- Display relevant Ayurvedic formulations.
-- Show basic formulation and ingredient information.
-- Present references or sources associated with the information.
+## 1. Frontend Overview
 
-## Proposed User Flow
+The frontend provides the main research and discovery interface for
+Ayurveda Intelligence.
 
-User
+Its purpose is to allow a user to enter a disease, symptom, or common
+term and understand how the system arrives at its formulation results.
+
+The interface is designed around the following principle:
+
+```text
+SEARCH
   ↓
-Enter Disease / Symptom
+UNDERSTAND
   ↓
-Search
+COMPARE
   ↓
-View Identified Condition
-  ↓
-View Relevant Formulations
-  ↓
-View Formulation Details
-
-## Planned Interface
-
-The initial interface will contain:
-
-- Search / input section
-- Search button
-- Identified condition section
-- Recommended formulations section
-- Formulation details section
-- Source / reference section
-
-## Current Status
-
-The frontend is currently at the planning stage.
-
-The user interface will be implemented after the basic backend
-and data structure are established.
+TRACE THE EVIDENCE
