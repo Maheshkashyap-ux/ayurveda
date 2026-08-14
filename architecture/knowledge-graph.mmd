@@ -1,30 +1,76 @@
-graph LR
+flowchart LR
 
-    D["Disease"]
+    USER["USER INPUT<br/><br/>fever"]
 
-    S["Symptoms"]
+    SYN["SYNONYM / TERMINOLOGY<br/><br/>Fever<br/>↓<br/>Jvara"]
 
-    SY["Disease Synonyms"]
+    DIS["DISEASE / CONDITION<br/><br/>Jvara<br/><br/>Disease ID: D001<br/>Common Name: Fever"]
 
-    F["Ayurvedic Formulation"]
+    FORM["FORMULATION<br/><br/>Punarnavadi Kashaya<br/><br/>Type: Kashaya"]
 
-    I1["Ingredient"]
+    ING1["INGREDIENT<br/><br/>Ingredient A"]
 
-    I2["Ingredient"]
+    ING2["INGREDIENT<br/><br/>Ingredient B"]
 
-    P["Ayurvedic Properties"]
+    ING3["INGREDIENT<br/><br/>Ingredient C"]
 
-    R["Reference / Source"]
+    PROP1["AYURVEDIC PROPERTY<br/><br/>Rasa"]
 
-    D -->|"has"| S
-    D -->|"also known as"| SY
+    PROP2["AYURVEDIC PROPERTY<br/><br/>Guna"]
 
-    D -->|"treated by"| F
+    PROP3["AYURVEDIC PROPERTY<br/><br/>Virya"]
 
-    F -->|"contains"| I1
-    F -->|"contains"| I2
+    REF["REFERENCE / EVIDENCE<br/><br/>Reference ID<br/>Source<br/>Author<br/>Year"]
 
-    I1 -->|"has properties"| P
-    I2 -->|"has properties"| P
+    RESULT["EXPLAINABLE RESULT<br/><br/>Why was this formulation shown?<br/><br/>Terminology Match<br/>Condition Match<br/>Formulation Association<br/>Evidence Status"]
 
-    F -->|"documented in"| R
+
+    USER -->|"searches"| SYN
+
+    SYN -->|"normalizes to"| DIS
+
+    DIS -->|"associated with"| FORM
+
+    FORM -->|"contains"| ING1
+    FORM -->|"contains"| ING2
+    FORM -->|"contains"| ING3
+
+    ING1 -->|"has"| PROP1
+    ING2 -->|"has"| PROP2
+    ING3 -->|"has"| PROP3
+
+    FORM -->|"supported by"| REF
+
+    SYN -->|"normalization evidence"| RESULT
+    DIS -->|"condition evidence"| RESULT
+    FORM -->|"candidate"| RESULT
+    REF -->|"source evidence"| RESULT
+
+
+    %% Additional knowledge relationships
+
+    SYM["SYMPTOM<br/><br/>Fever<br/>Cough<br/>Other symptoms"]
+
+    DIS -->|"may have"| SYM
+
+    SYM -.->|"future semantic relationship"| FORM
+
+
+    %% Future semantic / NLP layer
+
+    NLP["FUTURE NLP LAYER<br/><br/>Semantic similarity<br/>Entity recognition<br/>Transliteration<br/>Context understanding"]
+
+    USER -.-> NLP
+    NLP -.-> SYN
+    NLP -.-> DIS
+
+
+    %% Knowledge graph store
+
+    KG["KNOWLEDGE GRAPH<br/><br/>Nodes:<br/>Disease<br/>Formulation<br/>Ingredient<br/>Symptom<br/>Reference<br/><br/>Relationships:<br/>has_synonym<br/>associated_with<br/>contains<br/>has_property<br/>supported_by<br/>has_symptom"]
+
+    SYN -.-> KG
+    DIS -.-> KG
+    FORM -.-> KG
+    SYM -.-> KG
+    REF -.-> KG
