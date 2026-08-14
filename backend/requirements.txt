@@ -1,0 +1,9 @@
+# ============================================================
+# Ayurveda Intelligence — Backend Dependencies
+# ============================================================
+
+# REST API
+fastapi>=0.100.0
+
+# Development server
+uvicorn[standard]>=0.22.0
