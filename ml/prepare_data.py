@@ -150,7 +150,6 @@ validation_df, test_df = train_test_split(
     temp_df,
     test_size=0.50,
     random_state=42,
-    stratify=temp_df[TARGET],
 )
 
 
