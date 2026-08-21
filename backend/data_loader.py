@@ -1,118 +1,71 @@
 """
 Ayurveda Intelligence
-Backend Data Loader
+Legacy Knowledge-Base Loader
 
-Responsible for loading the prototype Ayurveda knowledge base
-from CSV files defined in config.py.
+The recommendation engine does NOT use this loader.
 
-Current datasets:
-    - diseases.csv
-    - formulations.csv
-    - synonyms.csv
+The production/presentation recommendation path uses:
 
-The loader keeps file-handling logic separate from the
-recommendation logic.
+    ml/models/final_top5_formulation_ranker.joblib
+
+This module is retained for compatibility with older prototype
+components.
 """
 
 import csv
 from pathlib import Path
 
-from config import (
-    DISEASES_FILE,
-    FORMULATIONS_FILE,
-    SYNONYMS_FILE,
-)
+
+PROJECT_ROOT = Path(
+    __file__
+).resolve().parent.parent
+
+DATA_DIR = PROJECT_ROOT / "data"
 
 
-# ============================================================
-# GENERIC CSV LOADER
-# ============================================================
-
-def _load_csv(file_path: Path):
-    """
-    Load a CSV file and return its records as a list of dictionaries.
-
-    Each row is converted into a dictionary where the CSV column
-    names become the dictionary keys.
-    """
+def load_csv(
+    file_path: Path,
+):
 
     if not file_path.exists():
-        raise FileNotFoundError(
-            f"Knowledge base file not found: {file_path}"
-        )
+
+        return []
 
     with file_path.open(
-        mode="r",
+        "r",
         encoding="utf-8-sig",
-        newline=""
+        newline="",
     ) as file:
 
-        reader = csv.DictReader(file)
-
-        if reader.fieldnames is None:
-            raise ValueError(
-                f"CSV file has no header: {file_path}"
-            )
+        reader = csv.DictReader(
+            file
+        )
 
         return list(reader)
 
 
-# ============================================================
-# DISEASE DATA
-# ============================================================
-
 def load_diseases():
-    """
-    Load disease / condition records.
 
-    Returns:
-        list[dict]: Disease records from diseases.csv
-    """
+    return load_csv(
+        DATA_DIR / "diseases.csv"
+    )
 
-    return _load_csv(DISEASES_FILE)
-
-
-# ============================================================
-# FORMULATION DATA
-# ============================================================
 
 def load_formulations():
-    """
-    Load formulation records.
 
-    Returns:
-        list[dict]: Formulation records from formulations.csv
-    """
+    return load_csv(
+        DATA_DIR / "formulations.csv"
+    )
 
-    return _load_csv(FORMULATIONS_FILE)
-
-
-# ============================================================
-# SYNONYM DATA
-# ============================================================
 
 def load_synonyms():
-    """
-    Load terminology / synonym mappings.
 
-    Returns:
-        list[dict]: Synonym records from synonyms.csv
-    """
+    return load_csv(
+        DATA_DIR / "synonyms.csv"
+    )
 
-    return _load_csv(SYNONYMS_FILE)
-
-
-# ============================================================
-# COMPLETE KNOWLEDGE BASE
-# ============================================================
 
 def load_knowledge_base():
-    """
-    Load all prototype knowledge-base datasets.
-
-    Returns:
-        dict containing diseases, formulations and synonyms.
-    """
 
     return {
         "diseases": load_diseases(),
@@ -121,39 +74,25 @@ def load_knowledge_base():
     }
 
 
-# ============================================================
-# DATASET SUMMARY
-# ============================================================
-
 def get_dataset_summary():
-    """
-    Return basic statistics about the current knowledge base.
-
-    This is useful for debugging and future dashboard statistics.
-    """
-
-    diseases = load_diseases()
-    formulations = load_formulations()
-    synonyms = load_synonyms()
 
     return {
-        "diseases": len(diseases),
-        "formulations": len(formulations),
-        "synonyms": len(synonyms),
+        "diseases": len(
+            load_diseases()
+        ),
+
+        "formulations": len(
+            load_formulations()
+        ),
+
+        "synonyms": len(
+            load_synonyms()
+        ),
     }
 
 
-# ============================================================
-# SIMPLE LOCAL TEST
-# ============================================================
-
 if __name__ == "__main__":
 
-    print("Ayurveda Intelligence — Knowledge Base")
-    print("---------------------------------------")
-
-    summary = get_dataset_summary()
-
-    print(f"Diseases      : {summary['diseases']}")
-    print(f"Formulations  : {summary['formulations']}")
-    print(f"Synonyms      : {summary['synonyms']}")
+    print(
+        get_dataset_summary()
+    )
