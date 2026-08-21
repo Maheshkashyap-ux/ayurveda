@@ -1,134 +1,79 @@
 """
 Ayurveda Intelligence
 Backend Health Utilities
-
-Provides simple checks for the prototype backend and its
-local knowledge-base files.
-
-This module does not perform recommendation logic.
 """
-
-
-from pathlib import Path
 
 from config import (
     APP_NAME,
     APP_VERSION,
     APP_ENVIRONMENT,
-    DISEASES_FILE,
-    FORMULATIONS_FILE,
-    SYNONYMS_FILE,
+    MODEL_PATH,
 )
 
 
-# ============================================================
-# FILE CHECK
-# ============================================================
-
-def check_file(path: Path):
-    """
-    Check whether a required knowledge-base file exists.
-    """
-
-    return {
-        "file": path.name,
-        "exists": path.exists(),
-        "path": str(path),
-    }
-
-
-# ============================================================
-# KNOWLEDGE BASE CHECK
-# ============================================================
-
-def check_knowledge_base():
-    """
-    Check the availability of all required prototype datasets.
-    """
-
-    files = [
-        check_file(DISEASES_FILE),
-        check_file(FORMULATIONS_FILE),
-        check_file(SYNONYMS_FILE),
-    ]
-
-    available = all(
-        item["exists"]
-        for item in files
-    )
-
-    return {
-        "status": "ready" if available else "incomplete",
-        "files": files,
-    }
-
-
-# ============================================================
-# BACKEND STATUS
-# ============================================================
-
 def get_backend_status():
-    """
-    Return an overall backend status summary.
-    """
 
-    knowledge_base = check_knowledge_base()
+    model_exists = MODEL_PATH.exists()
 
     return {
         "application": APP_NAME,
         "version": APP_VERSION,
         "environment": APP_ENVIRONMENT,
+
         "status": (
             "ready"
-            if knowledge_base["status"] == "ready"
-            else "degraded"
+            if model_exists
+            else "model_missing"
         ),
-        "knowledge_base": knowledge_base,
+
+        "model": {
+            "path": str(
+                MODEL_PATH
+            ),
+            "exists": model_exists,
+        },
     }
 
 
-# ============================================================
-# LOCAL TEST
-# ============================================================
-
 if __name__ == "__main__":
+
+    print()
+    print("=" * 60)
+    print("AYURVEDA INTELLIGENCE — BACKEND STATUS")
+    print("=" * 60)
 
     status = get_backend_status()
 
+    print(
+        f"Application : "
+        f"{status['application']}"
+    )
+
+    print(
+        f"Version     : "
+        f"{status['version']}"
+    )
+
+    print(
+        f"Environment : "
+        f"{status['environment']}"
+    )
+
+    print(
+        f"Status      : "
+        f"{status['status']}"
+    )
+
     print()
-    print("==============================================")
-    print(" Ayurveda Intelligence — Backend Status")
-    print("==============================================")
 
     print(
-        f"Application : {status['application']}"
+        f"Model exists: "
+        f"{status['model']['exists']}"
     )
 
     print(
-        f"Version     : {status['version']}"
+        f"Model path: "
+        f"{status['model']['path']}"
     )
-
-    print(
-        f"Environment : {status['environment']}"
-    )
-
-    print(
-        f"Status      : {status['status']}"
-    )
-
-    print()
-    print("Knowledge Base:")
-
-    for item in status["knowledge_base"]["files"]:
-
-        state = (
-            "OK"
-            if item["exists"]
-            else "MISSING"
-        )
-
-        print(
-            f"  [{state}] {item['file']}"
-        )
 
     print()
