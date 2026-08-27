@@ -2270,3 +2270,270 @@ footer {
     flex-direction: column;
   }
 }
+
+/* =========================================================
+   PATIENT CONTEXT FORM — POLISHED CONTROLS
+   ========================================================= */
+
+.patient-context-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.patient-context-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--green-800),
+    var(--green-500),
+    var(--green-300)
+  );
+}
+
+.patient-context-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px 20px;
+  margin-top: 22px;
+}
+
+.form-field {
+  min-width: 0;
+}
+
+.form-field label {
+  display: block;
+  margin-bottom: 7px;
+
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  width: 100%;
+  min-height: 44px;
+
+  padding: 10px 13px;
+
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  background: #ffffff;
+  color: var(--text);
+
+  outline: none;
+
+  font-size: 13px;
+  line-height: 1.4;
+
+  box-shadow:
+    0 1px 2px rgba(20, 55, 38, 0.03);
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease,
+    background 0.18s ease;
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+  color: #9aa8a0;
+}
+
+.form-field input:hover,
+.form-field select:hover,
+.form-field textarea:hover {
+  border-color: var(--border-dark);
+  background: #fcfdfc;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  border-color: var(--green-500);
+
+  box-shadow:
+    0 0 0 3px rgba(63, 139, 98, 0.12),
+    0 4px 12px rgba(20, 55, 38, 0.05);
+
+  background: #ffffff;
+}
+
+.form-field select {
+  appearance: none;
+  cursor: pointer;
+
+  padding-right: 38px;
+
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--green-700) 50%),
+    linear-gradient(135deg, var(--green-700) 50%, transparent 50%);
+  background-position:
+    calc(100% - 17px) 19px,
+    calc(100% - 12px) 19px;
+  background-size:
+    5px 5px,
+    5px 5px;
+  background-repeat: no-repeat;
+}
+
+.form-field select:invalid {
+  color: #8b9891;
+}
+
+.form-field textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Better spacing when a field contains helper text */
+
+.form-field small {
+  display: block;
+  margin-top: 6px;
+
+  color: var(--text-muted);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+/* =========================================================
+   MAIN SEARCH BAR
+   ========================================================= */
+
+.search-row {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.search-row input {
+  flex: 1;
+  min-width: 0;
+
+  min-height: 46px;
+
+  padding: 11px 15px;
+
+  border: 1px solid var(--border);
+  border-radius: 11px;
+
+  background: #ffffff;
+  color: var(--text);
+
+  outline: none;
+
+  font-size: 14px;
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.search-row input::placeholder {
+  color: #98a69e;
+}
+
+.search-row input:focus {
+  border-color: var(--green-500);
+
+  box-shadow:
+    0 0 0 3px rgba(63, 139, 98, 0.12);
+}
+
+.primary-button {
+  min-height: 46px;
+
+  padding: 0 20px;
+
+  border: 0;
+  border-radius: 10px;
+
+  background: linear-gradient(
+    135deg,
+    var(--green-800),
+    var(--green-600)
+  );
+
+  color: #ffffff;
+
+  font-size: 12px;
+  font-weight: 750;
+
+  box-shadow:
+    0 7px 18px rgba(18, 75, 50, 0.16);
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    filter 0.18s ease;
+}
+
+.primary-button:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 10px 24px rgba(18, 75, 50, 0.22);
+
+  filter: brightness(1.04);
+}
+
+.primary-button:active {
+  transform: translateY(0);
+}
+
+.primary-button:disabled {
+  transform: none;
+  box-shadow: none;
+}
+
+/* =========================================================
+   ERROR MESSAGE
+   ========================================================= */
+
+.error-message {
+  margin-top: 12px;
+  padding: 11px 13px;
+
+  border: 1px solid #efc4c0;
+  border-radius: 9px;
+
+  background: var(--danger-bg);
+  color: var(--danger);
+
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+/* =========================================================
+   MOBILE PATIENT FORM
+   ========================================================= */
+
+@media (max-width: 1000px) {
+  .patient-context-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .patient-context-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .form-field input,
+  .form-field select,
+  .form-field textarea {
+    min-height: 46px;
+  }
+}
