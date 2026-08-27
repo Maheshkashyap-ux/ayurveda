@@ -1,216 +1,168 @@
 """
 Ayurveda Intelligence
 Backend Test Suite
-
-Tests the main recommendation pipeline using representative
-prototype queries.
-
-Test coverage:
-    1. Empty input
-    2. Synonym-based search
-    3. Direct canonical-term search
-    4. Unknown search term
-    5. Recommendation structure
 """
 
 from recommendation import (
-    normalize_input,
-    resolve_terminology,
-    find_disease,
-    find_formulations,
+    normalize_text,
+    extract_ingredients,
+    calculate_ingredient_match,
     recommend,
+    get_model_status,
 )
 
-from data_loader import load_knowledge_base
 
-
-# ============================================================
-# TEST HELPERS
-# ============================================================
-
-def check(condition, message):
-    """
-    Simple assertion helper for readable terminal output.
-    """
+def check(
+    condition,
+    message,
+):
 
     if not condition:
-        raise AssertionError(message)
 
-    print(f"[PASS] {message}")
-
-
-# ============================================================
-# TEST 1 — INPUT NORMALIZATION
-# ============================================================
-
-def test_input_normalization():
-
-    result = normalize_input("  FEVER  ")
-
-    check(
-        result == "fever",
-        "Input is correctly normalized."
-    )
-
-
-# ============================================================
-# TEST 2 — TERMINOLOGY RESOLUTION
-# ============================================================
-
-def test_terminology_resolution():
-
-    knowledge_base = load_knowledge_base()
-
-    synonyms = knowledge_base["synonyms"]
-
-    result = resolve_terminology(
-        "fever",
-        synonyms
-    )
-
-    check(
-        result["canonical_term"] != "",
-        "Terminology resolver returns a canonical term."
-    )
-
-    print(
-        f"      fever → {result['canonical_term']}"
-    )
-
-
-# ============================================================
-# TEST 3 — DISEASE LOOKUP
-# ============================================================
-
-def test_disease_lookup():
-
-    knowledge_base = load_knowledge_base()
-
-    diseases = knowledge_base["diseases"]
-
-    result = find_disease(
-        "jvara",
-        diseases
-    )
-
-    check(
-        result is not None,
-        "Disease lookup finds the canonical condition."
-    )
-
-
-# ============================================================
-# TEST 4 — FORMULATION RETRIEVAL
-# ============================================================
-
-def test_formulation_retrieval():
-
-    knowledge_base = load_knowledge_base()
-
-    diseases = knowledge_base["diseases"]
-    formulations = knowledge_base["formulations"]
-
-    disease = find_disease(
-        "jvara",
-        diseases
-    )
-
-    if disease is None:
         raise AssertionError(
-            "Cannot test formulation retrieval because "
-            "the Jvara disease record was not found."
+            message
         )
 
-    candidates = find_formulations(
-        disease,
-        formulations
+    print(
+        f"[PASS] {message}"
+    )
+
+
+# ============================================================
+# TEST 1
+# ============================================================
+
+def test_text_normalization():
+
+    result = normalize_text(
+        "  Leigh   Syndrome  "
     )
 
     check(
-        isinstance(candidates, list),
-        "Formulation retrieval returns a list."
+        result == "leigh syndrome",
+        "Text normalization works.",
+    )
+
+
+# ============================================================
+# TEST 2
+# ============================================================
+
+def test_ingredient_extraction():
+
+    result = extract_ingredients(
+        "Ashwagandha (5g), Brahmi (2g), Warm water (200ml)"
+    )
+
+    check(
+        "ashwagandha" in result,
+        "Ashwagandha extracted.",
+    )
+
+    check(
+        "brahmi" in result,
+        "Brahmi extracted.",
+    )
+
+    check(
+        "warm water" in result,
+        "Warm water extracted.",
+    )
+
+
+# ============================================================
+# TEST 3
+# ============================================================
+
+def test_ingredient_match():
+
+    score = calculate_ingredient_match(
+        "Ashwagandha (5g), Brahmi (2g), Warm water (200ml)",
+        "Ashwagandha (5g), Warm water (200ml)",
+    )
+
+    check(
+        score > 0,
+        "Ingredient overlap calculation works.",
     )
 
     print(
-        f"      Candidates found: {len(candidates)}"
+        f"      Match: {score}%"
     )
 
 
 # ============================================================
-# TEST 5 — COMPLETE RECOMMENDATION PIPELINE
+# TEST 4
 # ============================================================
 
-def test_recommendation_pipeline():
+def test_model_exists():
 
-    result = recommend("fever")
+    status = get_model_status()
+
+    check(
+        status["exists"],
+        "Final ML model exists.",
+    )
+
+    print(
+        f"      Model: {status['path']}"
+    )
+
+
+# ============================================================
+# TEST 5
+# ============================================================
+
+def test_recommendation():
+
+    result = recommend(
+        "Leigh Syndrome",
+        limit=3,
+    )
 
     check(
         "status" in result,
-        "Recommendation result contains a status."
-    )
-
-    check(
-        "normalized_term" in result,
-        "Recommendation result contains normalized terminology."
+        "Recommendation contains status.",
     )
 
     check(
         "recommendations" in result,
-        "Recommendation result contains recommendations."
+        "Recommendation contains recommendations.",
     )
 
-    print(
-        f"      Status: {result['status']}"
+    check(
+        len(
+            result["recommendations"]
+        ) <= 3,
+        "Recommendation respects Top-3 limit.",
     )
 
-    print(
-        f"      Normalized term: "
-        f"{result['normalized_term']}"
-    )
+    print()
 
-    print(
-        f"      Recommendations: "
-        f"{len(result['recommendations'])}"
-    )
+    for item in result[
+        "recommendations"
+    ]:
+
+        print(
+            f"      {item['rank']}. "
+            f"{item['formulation']}"
+        )
 
 
 # ============================================================
-# TEST 6 — UNKNOWN TERM
+# TEST 6
 # ============================================================
 
-def test_unknown_term():
+def test_empty_query():
 
     result = recommend(
-        "unknown_term_xyz"
+        "",
+        limit=3,
     )
-
-    check(
-        result["status"] == "no_match",
-        "Unknown terminology is handled safely."
-    )
-
-    check(
-        result["recommendations"] == [],
-        "Unknown terminology does not produce fabricated results."
-    )
-
-
-# ============================================================
-# TEST 7 — EMPTY INPUT
-# ============================================================
-
-def test_empty_input():
-
-    result = recommend("")
 
     check(
         result["status"] == "invalid_input",
-        "Empty input is rejected safely."
-    )
-
-    check(
-        result["recommendations"] == [],
-        "Empty input produces no recommendations."
+        "Empty query is rejected.",
     )
 
 
@@ -221,18 +173,19 @@ def test_empty_input():
 def run_tests():
 
     print()
-    print("==============================================")
-    print(" Ayurveda Intelligence — Backend Tests")
-    print("==============================================")
+    print("=" * 70)
+    print(
+        "AYURVEDA INTELLIGENCE — BACKEND TESTS"
+    )
+    print("=" * 70)
 
     tests = [
-        test_input_normalization,
-        test_terminology_resolution,
-        test_disease_lookup,
-        test_formulation_retrieval,
-        test_recommendation_pipeline,
-        test_unknown_term,
-        test_empty_input,
+        test_text_normalization,
+        test_ingredient_extraction,
+        test_ingredient_match,
+        test_model_exists,
+        test_recommendation,
+        test_empty_query,
     ]
 
     passed = 0
@@ -240,11 +193,15 @@ def run_tests():
     for test in tests:
 
         print()
-        print(f"Running: {test.__name__}")
+
+        print(
+            f"Running: {test.__name__}"
+        )
 
         try:
 
             test()
+
             passed += 1
 
         except Exception as error:
@@ -254,16 +211,21 @@ def run_tests():
             )
 
     print()
-    print("==============================================")
+    print("=" * 70)
+
     print(
-        f"Result: {passed}/{len(tests)} tests passed"
+        f"RESULT: {passed}/{len(tests)} tests passed"
     )
-    print("==============================================")
 
+    print("=" * 70)
 
-# ============================================================
-# ENTRY POINT
-# ============================================================
+    return passed == len(tests)
+
 
 if __name__ == "__main__":
-    run_tests()
+
+    success = run_tests()
+
+    raise SystemExit(
+        0 if success else 1
+    )
