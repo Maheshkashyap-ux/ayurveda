@@ -1,29 +1,27 @@
 """
 Ayurveda Intelligence
-Backend API
+FastAPI Backend
 
-Provides a lightweight REST API around the prototype
-recommendation engine.
-
-Current endpoints:
-
-    GET  /health
-    GET  /search?q=fever
-    GET  /recommend?q=fever
-    GET  /diseases
-    GET  /formulations
-
-The API is intentionally simple for the hackathon prototype.
+ML-backed formulation recommendation API.
 """
 
+from typing import Any
+
 from fastapi import FastAPI, HTTPException
-from recommendation import recommend
-from data_loader import (
-    load_diseases,
-    load_formulations,
-    load_synonyms,
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+
+from config import (
+    APP_NAME,
+    APP_VERSION,
+    APP_ENVIRONMENT,
+    DISCLAIMER,
 )
-from config import APP_NAME, APP_VERSION, APP_ENVIRONMENT
+
+from services.ml_recommender import (
+    recommend_for_frontend,
+    model_health,
+)
 
 
 # ============================================================
@@ -34,153 +32,168 @@ app = FastAPI(
     title=APP_NAME,
     version=APP_VERSION,
     description=(
-        "Evidence-aware Ayurvedic formulation discovery "
-        "backend for the hackathon prototype."
+        "Ayurvedic formulation recommendation API "
+        "powered by the trained Top-5 ranking artifact."
     ),
 )
 
 
 # ============================================================
-# HEALTH CHECK
+# CORS
+# ============================================================
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:5173",
+        "null",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+# ============================================================
+# REQUEST MODEL
+# ============================================================
+
+class RecommendationRequest(BaseModel):
+
+    query: str = Field(
+        ...,
+        min_length=1,
+        description="Disease or patient condition.",
+    )
+
+    top_k: int = Field(
+        default=5,
+        ge=1,
+        le=5,
+    )
+
+    patient_context: dict[str, Any] | None = None
+
+
+# ============================================================
+# HEALTH
 # ============================================================
 
 @app.get("/health")
-def health_check():
-    """
-    Check whether the backend API is running.
-    """
+def health():
+
+    model = model_health()
 
     return {
-        "status": "ok",
+        "status": (
+            "ok"
+            if model["status"] == "ready"
+            else "degraded"
+        ),
         "application": APP_NAME,
         "version": APP_VERSION,
         "environment": APP_ENVIRONMENT,
+        "model": model,
     }
 
 
 # ============================================================
-# SEARCH
+# MODEL HEALTH
 # ============================================================
 
-@app.get("/search")
-def search(q: str):
-    """
-    Resolve a user search term into its canonical terminology.
+@app.get("/model/health")
+def model_status():
 
-    Example:
-
-        /search?q=fever
-    """
-
-    query = q.strip()
-
-    if not query:
-        raise HTTPException(
-            status_code=400,
-            detail="Search term cannot be empty."
-        )
-
-    synonyms = load_synonyms()
-
-    from recommendation import resolve_terminology
-
-    result = resolve_terminology(
-        query,
-        synonyms
-    )
-
-    return {
-        "query": query,
-        "normalized_term": result["canonical_term"],
-        "match_type": result["match_type"],
-        "matched": result["matched"],
-    }
+    return model_health()
 
 
 # ============================================================
-# RECOMMENDATION
+# RECOMMEND — GET
 # ============================================================
 
 @app.get("/recommend")
-def get_recommendation(q: str):
-    """
-    Run the complete recommendation pipeline.
-
-    Example:
-
-        /recommend?q=fever
-    """
+def recommend_get(
+    q: str,
+    top_k: int = 5,
+):
 
     query = q.strip()
 
     if not query:
+
         raise HTTPException(
             status_code=400,
-            detail="Search term cannot be empty."
+            detail="Search term cannot be empty.",
         )
 
-    return recommend(query)
+    try:
+
+        return recommend_for_frontend(
+            query=query,
+            top_k=top_k,
+        )
+
+    except Exception as exc:
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Recommendation engine failed: "
+                f"{exc}"
+            ),
+        )
 
 
 # ============================================================
-# DISEASES
+# RECOMMEND — POST
 # ============================================================
 
-@app.get("/diseases")
-def get_diseases():
-    """
-    Return disease / condition records from the prototype
-    knowledge base.
-    """
+@app.post("/recommend")
+def recommend_post(
+    request: RecommendationRequest,
+):
 
-    diseases = load_diseases()
+    try:
 
-    return {
-        "count": len(diseases),
-        "diseases": diseases,
-    }
+        return recommend_for_frontend(
+            query=request.query,
+            top_k=request.top_k,
+            patient_context=request.patient_context,
+        )
 
+    except Exception as exc:
 
-# ============================================================
-# FORMULATIONS
-# ============================================================
-
-@app.get("/formulations")
-def get_formulations():
-    """
-    Return formulation records from the prototype
-    knowledge base.
-    """
-
-    formulations = load_formulations()
-
-    return {
-        "count": len(formulations),
-        "formulations": formulations,
-    }
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Recommendation engine failed: "
+                f"{exc}"
+            ),
+        )
 
 
 # ============================================================
-# API INFORMATION
+# ROOT
 # ============================================================
 
 @app.get("/")
 def root():
-    """
-    Basic API information.
-    """
 
     return {
         "application": APP_NAME,
         "version": APP_VERSION,
         "environment": APP_ENVIRONMENT,
-        "message": "Ayurveda Intelligence API is running.",
+        "message": (
+            "Ayurveda Intelligence ML API is running."
+        ),
         "endpoints": [
             "/health",
-            "/search?q=fever",
+            "/model/health",
             "/recommend?q=fever",
-            "/diseases",
-            "/formulations",
             "/docs",
         ],
+        "disclaimer": DISCLAIMER,
     }
