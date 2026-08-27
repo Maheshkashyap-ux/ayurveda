@@ -1,231 +1,98 @@
 """
 Ayurveda Intelligence
-Backend Test Suite
+Legacy Knowledge-Base Loader
+
+The recommendation engine does NOT use this loader.
+
+The production/presentation recommendation path uses:
+
+    ml/models/final_top5_formulation_ranker.joblib
+
+This module is retained for compatibility with older prototype
+components.
 """
 
-from recommendation import (
-    normalize_text,
-    extract_ingredients,
-    calculate_ingredient_match,
-    recommend,
-    get_model_status,
-)
+import csv
+from pathlib import Path
 
 
-def check(
-    condition,
-    message,
+PROJECT_ROOT = Path(
+    __file__
+).resolve().parent.parent
+
+DATA_DIR = PROJECT_ROOT / "data"
+
+
+def load_csv(
+    file_path: Path,
 ):
 
-    if not condition:
+    if not file_path.exists():
 
-        raise AssertionError(
-            message
+        return []
+
+    with file_path.open(
+        "r",
+        encoding="utf-8-sig",
+        newline="",
+    ) as file:
+
+        reader = csv.DictReader(
+            file
         )
 
-    print(
-        f"[PASS] {message}"
+        return list(reader)
+
+
+def load_diseases():
+
+    return load_csv(
+        DATA_DIR / "diseases.csv"
     )
 
 
-# ============================================================
-# TEST 1
-# ============================================================
+def load_formulations():
 
-def test_text_normalization():
-
-    result = normalize_text(
-        "  Leigh   Syndrome  "
-    )
-
-    check(
-        result == "leigh syndrome",
-        "Text normalization works.",
+    return load_csv(
+        DATA_DIR / "formulations.csv"
     )
 
 
-# ============================================================
-# TEST 2
-# ============================================================
+def load_synonyms():
 
-def test_ingredient_extraction():
-
-    result = extract_ingredients(
-        "Ashwagandha (5g), Brahmi (2g), Warm water (200ml)"
-    )
-
-    check(
-        "ashwagandha" in result,
-        "Ashwagandha extracted.",
-    )
-
-    check(
-        "brahmi" in result,
-        "Brahmi extracted.",
-    )
-
-    check(
-        "warm water" in result,
-        "Warm water extracted.",
+    return load_csv(
+        DATA_DIR / "synonyms.csv"
     )
 
 
-# ============================================================
-# TEST 3
-# ============================================================
+def load_knowledge_base():
 
-def test_ingredient_match():
-
-    score = calculate_ingredient_match(
-        "Ashwagandha (5g), Brahmi (2g), Warm water (200ml)",
-        "Ashwagandha (5g), Warm water (200ml)",
-    )
-
-    check(
-        score > 0,
-        "Ingredient overlap calculation works.",
-    )
-
-    print(
-        f"      Match: {score}%"
-    )
+    return {
+        "diseases": load_diseases(),
+        "formulations": load_formulations(),
+        "synonyms": load_synonyms(),
+    }
 
 
-# ============================================================
-# TEST 4
-# ============================================================
+def get_dataset_summary():
 
-def test_model_exists():
+    return {
+        "diseases": len(
+            load_diseases()
+        ),
 
-    status = get_model_status()
+        "formulations": len(
+            load_formulations()
+        ),
 
-    check(
-        status["exists"],
-        "Final ML model exists.",
-    )
-
-    print(
-        f"      Model: {status['path']}"
-    )
-
-
-# ============================================================
-# TEST 5
-# ============================================================
-
-def test_recommendation():
-
-    result = recommend(
-        "Leigh Syndrome",
-        limit=3,
-    )
-
-    check(
-        "status" in result,
-        "Recommendation contains status.",
-    )
-
-    check(
-        "recommendations" in result,
-        "Recommendation contains recommendations.",
-    )
-
-    check(
-        len(
-            result["recommendations"]
-        ) <= 3,
-        "Recommendation respects Top-3 limit.",
-    )
-
-    print()
-
-    for item in result[
-        "recommendations"
-    ]:
-
-        print(
-            f"      {item['rank']}. "
-            f"{item['formulation']}"
-        )
-
-
-# ============================================================
-# TEST 6
-# ============================================================
-
-def test_empty_query():
-
-    result = recommend(
-        "",
-        limit=3,
-    )
-
-    check(
-        result["status"] == "invalid_input",
-        "Empty query is rejected.",
-    )
-
-
-# ============================================================
-# TEST RUNNER
-# ============================================================
-
-def run_tests():
-
-    print()
-    print("=" * 70)
-    print(
-        "AYURVEDA INTELLIGENCE — BACKEND TESTS"
-    )
-    print("=" * 70)
-
-    tests = [
-        test_text_normalization,
-        test_ingredient_extraction,
-        test_ingredient_match,
-        test_model_exists,
-        test_recommendation,
-        test_empty_query,
-    ]
-
-    passed = 0
-
-    for test in tests:
-
-        print()
-
-        print(
-            f"Running: {test.__name__}"
-        )
-
-        try:
-
-            test()
-
-            passed += 1
-
-        except Exception as error:
-
-            print(
-                f"[FAIL] {error}"
-            )
-
-    print()
-    print("=" * 70)
-
-    print(
-        f"RESULT: {passed}/{len(tests)} tests passed"
-    )
-
-    print("=" * 70)
-
-    return passed == len(tests)
+        "synonyms": len(
+            load_synonyms()
+        ),
+    }
 
 
 if __name__ == "__main__":
 
-    success = run_tests()
-
-    raise SystemExit(
-        0 if success else 1
+    print(
+        get_dataset_summary()
     )
